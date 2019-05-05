@@ -1,4 +1,4 @@
-package br.com.teste.app;
+package br.com.rotas.app;
 
 import java.util.ArrayList;
 import java.util.Collections;
