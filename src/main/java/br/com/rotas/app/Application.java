@@ -3,7 +3,6 @@ package br.com.rotas.app;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Stack;
 
 /**
  * 
@@ -45,16 +44,17 @@ public class Application {
 		addAresta("ORL-CDG", "ORL", "CDG", 5);
 		addAresta("SCL-ORL", "SCL", "ORL", 20);
 
-		// Lets check from location Loc_1 to Loc_10
 		Grafo grafo = new Grafo(vertices, arestas);
 		Rotas rotas = new Rotas(grafo);
 		
+		// definir rotas a partir do vertice informado
 		rotas.buildRotas(vertices.get("GRU"));
 		
+		// obter a rota de menor custo, dado o vertice destino
 		List<Vertice> caminho = rotas.getMelhorCaminho(vertices.get("ORL"));
 
 		if (caminho == null || caminho.isEmpty()) {
-			throw new RuntimeException("NAO ENCONTROU ROTA!");
+			throw new RuntimeException("NAO ENCONTROU ROTA.");
 		}
 		
 		for (Vertice vertice : caminho) {
@@ -63,8 +63,8 @@ public class Application {
 		}
 	}
 
-	private void addAresta(String arestaId, String verticeOrigem, String verticeDestino, Integer distancia) {
-		Aresta aresta = new Aresta(arestaId, vertices.get(verticeOrigem), vertices.get(verticeDestino), distancia);
+	private void addAresta(String arestaId, String verticeOrigem, String verticeDestino, Integer preco) {
+		Aresta aresta = new Aresta(arestaId, vertices.get(verticeOrigem), vertices.get(verticeDestino), preco);
 		arestas.add(aresta);
 	}
 }
