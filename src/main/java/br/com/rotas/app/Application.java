@@ -27,7 +27,6 @@ public class Application {
 		}
 		
 		String nomeArquivo = args[0];
-		//String nomeArquivo = "C:\\Users\\Luis\\Downloads\\github\\rota-viagem\\input-file.txt";
 		
 		builder.executar(nomeArquivo);
 		
