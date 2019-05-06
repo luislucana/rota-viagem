@@ -62,8 +62,6 @@ public class Application {
 			linhasArquivo = linhas.collect(Collectors.toList());
 			linhas.close();
 			
-			//validateFileLines(linhasArquivo);
-			
 			for (String linha : linhasArquivo) {
 				System.out.println(linha);
 			}
