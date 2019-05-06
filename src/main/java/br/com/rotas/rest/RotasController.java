@@ -32,7 +32,7 @@ public class RotasController {
 		
 		try {
 			if (rotaInformadaValida(novaRota)) {
-				String linhaNovaRota = novaRota.getOrigem() + "," + novaRota.getDestino() + "," + novaRota.getPreco();
+				String linhaNovaRota = System.lineSeparator() + novaRota.getOrigem() + "," + novaRota.getDestino() + "," + novaRota.getPreco();
 				byte[] strToBytes = linhaNovaRota.getBytes();
 				
 				Files.write(path, strToBytes, StandardOpenOption.APPEND);
