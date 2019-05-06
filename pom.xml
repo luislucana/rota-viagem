@@ -5,7 +5,7 @@
 	<groupId>br.com</groupId>
 	<artifactId>rotas</artifactId>
 	<version>1.0</version>
-	<url>https://github.com/luislucana/test-backEnd-Java</url>
+	<url>https://github.com/luislucana/rotas</url>
 	
 	<parent>
 		<groupId>org.springframework.boot</groupId>
