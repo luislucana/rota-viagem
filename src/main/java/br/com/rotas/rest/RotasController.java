@@ -8,8 +8,8 @@ import java.nio.file.StandardOpenOption;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,17 +23,17 @@ import br.com.rotas.app.GrafoBuilder;
  *
  */
 @RestController
-//@RequestMapping("/rotas")
 public class RotasController {
 	
-	@PostMapping(value = "/rota/{novaRota}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/rota", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.ACCEPTED)
-	public String criarRota(@PathVariable String novaRota) {
+	public Resultado criarRota(@RequestBody RequestRota novaRota) {
 		Path path = GrafoBuilder.PATH_ARQUIVO;
 		
 		try {
 			if (rotaInformadaValida(novaRota)) {
-				byte[] strToBytes = novaRota.getBytes();
+				String linhaNovaRota = novaRota.getOrigem() + "," + novaRota.getDestino() + "," + novaRota.getPreco();
+				byte[] strToBytes = linhaNovaRota.getBytes();
 				
 				Files.write(path, strToBytes, StandardOpenOption.APPEND);
 			}
@@ -41,42 +41,33 @@ public class RotasController {
 			throw new RuntimeException("Nao foi possivel ler o arquivo.");
 		}
 		
-		return "Rota criada com sucesso";
+		return new Resultado("Rota criada com sucesso");
 	}
 	
 	@GetMapping(value = "/rota", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
-	public String getMelhorRota(@RequestParam String origem, @RequestParam String destino) {
+	public Resultado getMelhorRota(@RequestParam String origem, @RequestParam String destino) {
 		String melhorRota = "";
 		
 		melhorRota = Application.builder.obterMelhorCaminho(origem, destino);
 		
-		return melhorRota;
+		return new Resultado(melhorRota);
 	}
 	
-	private static boolean rotaInformadaValida(String rotaInformada) {
-		String[] rota = rotaInformada.split("-");
+	private static boolean rotaInformadaValida(RequestRota rotaInformada) {
+		if (rotaInformada.getOrigem() == null || rotaInformada.getOrigem().trim().length() == 0
+				|| rotaInformada.getDestino() == null || rotaInformada.getDestino().trim().length() == 0
+				|| rotaInformada.getPreco() == null || rotaInformada.getPreco().trim().length() == 0) {
+			throw new IllegalArgumentException("Todos os campos devem ser informados.");
+		}		
 		
-		if (rota.length != 3) {
-			return false;
-		}
-		
-		String origem = rota[0];
-		String destino = rota[1];
-		Integer preco = null;
-		
-		if (origem.trim().length() == 0) {
-			throw new IllegalArgumentException("Conteudo invalido (origem nao deve estar em branco). Cada linha deve estar no formato [ORIGEM],[DESTINO],[PRECO].");
-		}
-		
-		if (destino.trim().length() == 0) {
-			throw new IllegalArgumentException("Conteudo invalido (destino nao deve estar em branco). Cada linha deve estar no formato [ORIGEM],[DESTINO],[PRECO].");
-		}
+		String origem = rotaInformada.getOrigem();
+		String destino = rotaInformada.getDestino();
 		
 		try {
-			preco = Integer.valueOf(rota[2]);
+			Integer.valueOf(rotaInformada.getPreco());
 		} catch (NumberFormatException nfe) {
-			throw new IllegalArgumentException("Conteudo invalido (preco deve ser numero inteiro). Cada linha deve estar no formato [ORIGEM],[DESTINO],[PRECO].");
+			throw new IllegalArgumentException("Parametro invalido (preco deve ser numero inteiro).");
 		}
 		
 		return true;
