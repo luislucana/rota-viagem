@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * 
+ * Grafo - Definido como um conjunto de vertices e arestas.
  * 
  * @author Luis Lucana (luislucana@gmail.com)
  *

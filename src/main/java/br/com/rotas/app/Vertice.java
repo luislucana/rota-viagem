@@ -10,11 +10,8 @@ public class Vertice {
 	
 	private String id;
 
-	private String nome;
-	
-	public Vertice(String id, String nome) {
+	public Vertice(String id) {
 		this.id = id;
-		this.nome = nome;
 	}
 
 	public String getId() {
@@ -24,17 +21,29 @@ public class Vertice {
 	public void setId(String id) {
 		this.id = id;
 	}
-
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
+	
+	@Override
+    public boolean equals(Object object) {
+        if (this == object)
+            return true;
+        
+        if (object == null)
+            return false;
+        
+        if (getClass() != object.getClass())
+            return false;
+        
+        Vertice verticeToCompare = (Vertice) object;
+        
+        if (id != null && id.equals(verticeToCompare.id)) {
+        	return true;
+        }
+        
+        return false;
+    }
 
 	@Override
 	public String toString() {
-		return String.valueOf(this.nome);
+		return String.valueOf(this.id);
 	}
 }

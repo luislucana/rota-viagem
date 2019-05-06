@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 
 /**
  * 
@@ -19,69 +18,80 @@ public class Rotas {
 	
 	private List<Aresta> arestas;
 	
-	private Set<Vertice> settledNodes;
-	private Set<Vertice> unSettledNodes;
+	// vertices associados a uma aresta
+	private Set<Vertice> verticesAssociados;
+	// vertices NAO associados a uma aresta
+	private Set<Vertice> verticesNaoAssociados;
+	// vertice pode ser alcancado por qual outro vertice?
 	private Map<Vertice, Vertice> precedentes;
-	private Map<Vertice, Integer> distancia;
+	// para cada vertice, armazenar seu preco mais barato
+	private Map<Vertice, Integer> precosVertices;
 
 	public Rotas(Grafo grafo) {
 		this.arestas = new ArrayList<Aresta>(grafo.getArestas());
 	}
 
-	public void execute(Vertice verticeOrigem) {
-		settledNodes = new HashSet<Vertice>();
-		unSettledNodes = new HashSet<Vertice>();
+	public void buildRotas(Vertice verticeOrigem) {
+		verticesAssociados = new HashSet<Vertice>();
+		verticesNaoAssociados = new HashSet<Vertice>();
 		
-		distancia = new HashMap<Vertice, Integer>();
+		precosVertices = new HashMap<Vertice, Integer>();
 		precedentes = new HashMap<Vertice, Vertice>();
 		
-		distancia.put(verticeOrigem, Integer.valueOf(0));
+		precosVertices.put(verticeOrigem, Integer.valueOf(0));
 		
-		unSettledNodes.add(verticeOrigem);
+		verticesNaoAssociados.add(verticeOrigem);
 		
-		while (unSettledNodes.size() > 0) {
-			Vertice vertice = getMinimum(unSettledNodes);
+		while (!verticesNaoAssociados.isEmpty()) {
+			Vertice vertice = getVerticeMenorCusto(verticesNaoAssociados);
 			
-			settledNodes.add(vertice);
-			unSettledNodes.remove(vertice);
+			verticesAssociados.add(vertice);
+			verticesNaoAssociados.remove(vertice);
 			
-			findMinimalDistances(vertice);
+			ajustarMenorPreco(vertice);
 		}
 	}
 
-	private void findMinimalDistances(Vertice vertice) {
+	private void ajustarMenorPreco(Vertice vertice) {
 		List<Vertice> verticesAdjacentes = getVerticesAdjacentes(vertice);
 		
-		for (Vertice verticeAdjacente : verticesAdjacentes) {
-			if (getShortestDistance(verticeAdjacente) > getShortestDistance(vertice) + getDistance(vertice, verticeAdjacente)) {
-				
-				distancia.put(verticeAdjacente, getShortestDistance(vertice) + getDistance(vertice, verticeAdjacente));
-				
-				precedentes.put(verticeAdjacente, vertice);
-				
-				unSettledNodes.add(verticeAdjacente);
+		if (verticesAdjacentes != null && !verticesAdjacentes.isEmpty()) {
+			for (Vertice verticeAdjacente : verticesAdjacentes) {
+				if (getMenorPreco(verticeAdjacente) > getMenorPreco(vertice) + getPrecoAresta(vertice, verticeAdjacente)) {
+					
+					precosVertices.put(verticeAdjacente, getMenorPreco(vertice) + getPrecoAresta(vertice, verticeAdjacente));
+					// o precedente de 'verticeAdjacente' -> 'vertice'
+					precedentes.put(verticeAdjacente, vertice);
+					
+					verticesNaoAssociados.add(verticeAdjacente);
+				}
 			}
 		}
 	}
 
-	private int getDistance(Vertice node, Vertice target) {
-		Integer distancia = Integer.valueOf(0);
+	private Integer getPrecoAresta(Vertice verticeOrigem, Vertice verticeDestino) {
+		Integer preco = null;
 		
 		for (Aresta aresta : arestas) {
-			if (aresta.getOrigem().equals(node) && aresta.getDestino().equals(target)) {
-				distancia = aresta.getDistancia();
+			if (aresta.getOrigem().equals(verticeOrigem) && aresta.getDestino().equals(verticeDestino)) {
+				preco = aresta.getPreco();
 				break;
 			}
 		}
 		
-		return distancia;
+		if (preco == null) {
+			throw new RuntimeException("Rota/caminho nao encontrado entre " + verticeOrigem.getId() + " e "
+					+ verticeDestino.getId() + ".");
+		}
+		
+		return preco;
 	}
 
-	private List<Vertice> getVerticesAdjacentes(Vertice vertices) {
+	private List<Vertice> getVerticesAdjacentes(Vertice verticeOrigem) {
 		List<Vertice> verticesVizinhos = new ArrayList<Vertice>();
 		
 		for (Aresta aresta : arestas) {
-			if (aresta.getOrigem().equals(vertices) && !isSettled(aresta.getDestino())) {
+			if (aresta.getOrigem().equals(verticeOrigem) && !verticeAssociado(aresta.getDestino())) {
 				verticesVizinhos.add(aresta.getDestino());
 			}
 		}
@@ -89,14 +99,14 @@ public class Rotas {
 		return verticesVizinhos;
 	}
 
-	private Vertice getMinimum(Set<Vertice> vertices) {
+	private Vertice getVerticeMenorCusto(Set<Vertice> conjuntoVertices) {
 		Vertice minimum = null;
 		
-		for (Vertice vertice : vertices) {
+		for (Vertice vertice : conjuntoVertices) {
 			if (minimum == null) {
 				minimum = vertice;
 			} else {
-				if (getShortestDistance(vertice) < getShortestDistance(minimum)) {
+				if (getMenorPreco(vertice) < getMenorPreco(minimum)) {
 					minimum = vertice;
 				}
 			}
@@ -105,36 +115,40 @@ public class Rotas {
 		return minimum;
 	}
 
-	private boolean isSettled(Vertice vertice) {
-		return settledNodes.contains(vertice);
+	private boolean verticeAssociado(Vertice vertice) {
+		return verticesAssociados.contains(vertice);
 	}
 
-	private int getShortestDistance(Vertice destino) {
-		Integer d = distancia.get(destino);
+	private Integer getMenorPreco(Vertice destino) {
+		// o menor preco devera estar em 'precosVertices'
+		Integer preco = precosVertices.get(destino);
 		
-		if (d == null) {
+		if (preco == null) {
 			return Integer.MAX_VALUE;
-		} else {
-			return d;
 		}
+		
+		return preco;
 	}
 	
-	public Stack<Vertice> getMelhorCaminho(Vertice verticeDestino) {
-		Stack<Vertice> caminho = new Stack<Vertice>();
-		Vertice step = verticeDestino;
+	public List<Vertice> getMelhorCaminho(Vertice verticeDestino) {
+		List<Vertice> caminho = new ArrayList<Vertice>();
+		Vertice verticePrecedente = verticeDestino;
 		
 		// Existe algum caminho (precedente) para este no/vertice?
-		if (precedentes.get(step) == null) {
+		if (precedentes.get(verticePrecedente) == null) {
 			return null;
 		}
 		
 		// adiciono o proprio destino
-		caminho.add(step);
+		caminho.add(verticePrecedente);
 		
-		while (precedentes.get(step) != null) {
-			step = precedentes.get(step);
-			caminho.add(step);
+		while (precedentes.get(verticePrecedente) != null) {
+			verticePrecedente = precedentes.get(verticePrecedente);
+			caminho.add(verticePrecedente);
 		}
+		
+		// inverter a ordem dos itens da lista
+		Collections.reverse(caminho);
 		
 		return caminho;
 	}

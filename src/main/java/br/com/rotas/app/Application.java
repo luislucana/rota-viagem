@@ -25,11 +25,11 @@ public class Application {
 		vertices = new HashMap<String, Vertice>();
 		arestas = new ArrayList<Aresta>();
 		
-		Vertice verticeGRU = new Vertice("GRU", "GRU");
-		Vertice verticeBRC = new Vertice("BRC", "BRC");
-		Vertice verticeSCL = new Vertice("SCL", "SCL");
-		Vertice verticeCDG = new Vertice("CDG", "CDG");
-		Vertice verticeORL = new Vertice("ORL", "ORL");
+		Vertice verticeGRU = new Vertice("GRU");
+		Vertice verticeBRC = new Vertice("BRC");
+		Vertice verticeSCL = new Vertice("SCL");
+		Vertice verticeCDG = new Vertice("CDG");
+		Vertice verticeORL = new Vertice("ORL");
 		
 		vertices.put(verticeGRU.getId(), verticeGRU);
 		vertices.put(verticeBRC.getId(), verticeBRC);
@@ -49,9 +49,9 @@ public class Application {
 		Grafo grafo = new Grafo(vertices, arestas);
 		Rotas rotas = new Rotas(grafo);
 		
-		rotas.execute(vertices.get("GRU"));
+		rotas.buildRotas(vertices.get("GRU"));
 		
-		Stack<Vertice> caminho = rotas.getMelhorCaminho(vertices.get("CDG"));
+		List<Vertice> caminho = rotas.getMelhorCaminho(vertices.get("ORL"));
 
 		if (caminho == null || caminho.isEmpty()) {
 			throw new RuntimeException("NAO ENCONTROU ROTA!");

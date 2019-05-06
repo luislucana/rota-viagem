@@ -15,13 +15,13 @@ public class Aresta {
 	
 	private Vertice destino;
 	
-	private Integer distancia;
+	private Integer preco;
 	
-	public Aresta(String id, Vertice origem, Vertice destino, Integer distancia) {
+	public Aresta(String id, Vertice origem, Vertice destino, Integer preco) {
 		this.id = id;
 		this.origem = origem;
 		this.destino = destino;
-		this.distancia = distancia;
+		this.preco = preco;
 	}
 
 	public String getId() {
@@ -48,11 +48,11 @@ public class Aresta {
 		this.destino = destino;
 	}
 
-	public Integer getDistancia() {
-		return distancia;
+	public Integer getPreco() {
+		return preco;
 	}
 
-	public void setDistancia(Integer distancia) {
-		this.distancia = distancia;
+	public void setPreco(Integer preco) {
+		this.preco = preco;
 	}
 }
