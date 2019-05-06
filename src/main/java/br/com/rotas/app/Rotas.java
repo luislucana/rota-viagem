@@ -136,6 +136,9 @@ public class Rotas {
 		return preco;
 	}
 	
+	/**
+	 * Retornar o caminho mais economico, percorrendo os precedentes desde o vertice destino. 
+	 */
 	public List<Vertice> getMelhorCaminho(Vertice verticeDestino) {
 		List<Vertice> caminho = new ArrayList<Vertice>();
 		Vertice verticePrecedente = verticeDestino;
@@ -159,6 +162,10 @@ public class Rotas {
 		return caminho;
 	}
 	
+	/**
+	 * Depois de encontrado o caminho mais economico, fazer a soma dos custos 
+	 * dos trechos para retorno ao usuario. 
+	 */
 	public Integer getCustoCaminho(List<Vertice> caminho) {
 		Integer custoTotal = Integer.valueOf(0);
 		
