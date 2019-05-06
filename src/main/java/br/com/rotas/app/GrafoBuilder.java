@@ -18,6 +18,7 @@ import java.util.stream.Stream;
 public class GrafoBuilder {
 	private HashMap<String, Vertice> vertices;
 	private List<Aresta> arestas;
+	private Rotas rotas = null;
 	
 	private static final String DELIMITADOR = ",";
 	
@@ -50,8 +51,8 @@ public class GrafoBuilder {
 	private static void encerrarExecucao(String msg) {
 		if (msg != null)
 			System.out.println(msg);
-		System.out.println("Fim da execucao.");
-		System.exit(-1);
+		//System.out.println("Fim da execucao.");
+		//System.exit(-1);
 	}
 	
 	private Grafo buildGrafo(List<String> lines) {
@@ -98,17 +99,19 @@ public class GrafoBuilder {
 		return grafo;
 	}
 
-	public void executar(String nomeArquivo, String origem, String destino) {
+	public void executar(String nomeArquivo) {
 		List<String> linhasArquivo = obterLinhasArquivo(nomeArquivo);
 		
 		Grafo grafo = buildGrafo(linhasArquivo);
 		
-		Rotas rotas = new Rotas(grafo);
+		rotas = new Rotas(grafo);
 		
-		obterMelhorCaminho(rotas, origem, destino);
+		//obterMelhorCaminho(rotas, origem, destino);
 	}
 	
-	public void obterMelhorCaminho(Rotas rotas, String origem, String destino) {
+	public String obterMelhorCaminho(String origem, String destino) {
+		String melhorCaminho = "";
+		
 		// definir rotas a partir do vertice informado, calculando todos os custos
 		rotas.buildRotas(vertices.get(origem));
 		
@@ -121,12 +124,19 @@ public class GrafoBuilder {
 			encerrarExecucao("NAO ENCONTROU ROTA.");
 		}
 		
-		for (Vertice vertice : caminho) {
-			System.out.print(vertice);
-			System.out.print("-");
+		for (int i = 0; i < caminho.size(); i++) {
+			Vertice vertice = caminho.get(i);
+			
+			if (i != caminho.size() - 1) {
+				melhorCaminho = melhorCaminho + "-" + vertice + "-";
+			} else {
+				melhorCaminho = melhorCaminho + "-" + vertice;
+			}
 		}
 		
-		System.out.println("Custo do caminho: " + String.valueOf(custoCaminho));
+		melhorCaminho = melhorCaminho + " > $" + String.valueOf(custoCaminho);
+		
+		return melhorCaminho;
 	}
 	
 	private void addAresta(String arestaId, String verticeOrigem, String verticeDestino, Integer preco) {

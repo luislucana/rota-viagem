@@ -21,16 +21,16 @@ public class Application {
 	
 	public static void main(String[] args) {
 		
-		/*if (args == null || args.length == 0) {
+		if (args == null || args.length == 0) {
 			System.out.println("Favor informar o nome do arquivo no parametro.");
 			System.exit(-1);
-		}*/
+		}
 		
-		//String nomeArquivo = args[0];
+		String nomeArquivo = args[0];
 		//String nomeArquivo = "C:\\Users\\Luis\\Downloads\\github\\rota-viagem\\input-file.txt";
 		
-		//GrafoBuilder builder = new GrafoBuilder();
-		//builder.executar(nomeArquivo);
+		GrafoBuilder builder = new GrafoBuilder();
+		builder.executar(nomeArquivo);
 		
 		SpringApplication.run(Application.class, args);
 		
@@ -41,12 +41,32 @@ public class Application {
 		while (true) {
 			Scanner scanner = new Scanner(System.in);
 		    System.out.print("please enter the route: ");
-		    String username = scanner.next();
+		    String rotaInformada = scanner.next();
+		    
+		    if (rotaInformadaValida(rotaInformada)) {
+		    	// retornar melhor rota
+		    	String[] rota = rotaInformada.split("-");
+		    	String origem = rota[0];
+		    	String destino = rota[1];
+		    	builder.obterMelhorCaminho(origem, destino);
+		    } else {
+		    	System.out.println("A rota informada deve estar no padrao [ORIGEM]-[DESTINO].");
+		    }
 	
-		    System.out.println(username);
+		    System.out.println(rotaInformada);
 		    scanner.close();
 		}
 	}
 	
-	
+	private static boolean rotaInformadaValida(String rotaInformada) {
+		boolean rotaValida = false;
+		
+		String[] rota = rotaInformada.split("-");
+		
+		if (rota.length == 2) {
+			rotaValida = true;
+		}
+		
+		return rotaValida;
+	}
 }
