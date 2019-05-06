@@ -110,19 +110,20 @@ public class GrafoBuilder {
 	}
 	
 	public String obterMelhorCaminho(String origem, String destino) {
-		String melhorCaminho = "";
+		String melhorCaminho = "best route: ";
 		
 		// definir rotas a partir do vertice informado, calculando todos os custos
 		rotas.buildRotas(vertices.get(origem));
 		
 		// obter a rota de menor custo, dado o vertice destino
 		List<Vertice> caminho = rotas.getMelhorCaminho(vertices.get(destino));
-		
-		Integer custoCaminho = rotas.getCustoCaminho(caminho);
 
 		if (caminho == null || caminho.isEmpty()) {
-			encerrarExecucao("NAO ENCONTROU ROTA.");
+			//encerrarExecucao("NAO ENCONTROU ROTA.");
+			return "NAO ENCONTROU ROTA.";
 		}
+		
+		Integer custoCaminho = rotas.getCustoCaminho(caminho);
 		
 		for (int i = 0; i < caminho.size(); i++) {
 			Vertice vertice = caminho.get(i);

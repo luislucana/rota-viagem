@@ -38,23 +38,24 @@ public class Application {
 		System.out.println("APLICACAO INICIALIZADA");
 		System.out.println("--------------------------------------------------");
 		
+		String melhorCaminho = "";
+		Scanner scanner = new Scanner(System.in);
 		while (true) {
-			Scanner scanner = new Scanner(System.in);
 		    System.out.print("please enter the route: ");
-		    String rotaInformada = scanner.next();
+		    String rotaInformada = scanner.nextLine();
 		    
 		    if (rotaInformadaValida(rotaInformada)) {
 		    	// retornar melhor rota
 		    	String[] rota = rotaInformada.split("-");
 		    	String origem = rota[0];
 		    	String destino = rota[1];
-		    	builder.obterMelhorCaminho(origem, destino);
+		    	
+		    	melhorCaminho = builder.obterMelhorCaminho(origem, destino);
 		    } else {
 		    	System.out.println("A rota informada deve estar no padrao [ORIGEM]-[DESTINO].");
 		    }
 	
-		    System.out.println(rotaInformada);
-		    scanner.close();
+		    System.out.println(melhorCaminho);
 		}
 	}
 	
