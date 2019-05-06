@@ -42,17 +42,23 @@ public class Rotas {
 		
 		verticesNaoAssociados.add(verticeOrigem);
 		
+		// Aqui ocorre a definicao de todos os custos para se chegar a todos os demais vertices
 		while (!verticesNaoAssociados.isEmpty()) {
 			Vertice vertice = getVerticeMenorCusto(verticesNaoAssociados);
 			
 			verticesAssociados.add(vertice);
 			verticesNaoAssociados.remove(vertice);
 			
-			ajustarMenorPreco(vertice);
+			definirPrecosVerticesAdjacentes(vertice);
 		}
 	}
 
-	private void ajustarMenorPreco(Vertice vertice) {
+	/**
+	 * Armazena o menor preco para os vertices adjacentes e 
+	 * 
+	 * @param vertice
+	 */
+	private void definirPrecosVerticesAdjacentes(Vertice vertice) {
 		List<Vertice> verticesAdjacentes = getVerticesAdjacentes(vertice);
 		
 		if (verticesAdjacentes != null && !verticesAdjacentes.isEmpty()) {
@@ -100,19 +106,19 @@ public class Rotas {
 	}
 
 	private Vertice getVerticeMenorCusto(Set<Vertice> conjuntoVertices) {
-		Vertice minimum = null;
+		Vertice verticeMaisBarato = null;
 		
 		for (Vertice vertice : conjuntoVertices) {
-			if (minimum == null) {
-				minimum = vertice;
+			if (verticeMaisBarato == null) {
+				verticeMaisBarato = vertice;
 			} else {
-				if (getMenorPreco(vertice) < getMenorPreco(minimum)) {
-					minimum = vertice;
+				if (getMenorPreco(vertice) < getMenorPreco(verticeMaisBarato)) {
+					verticeMaisBarato = vertice;
 				}
 			}
 		}
 		
-		return minimum;
+		return verticeMaisBarato;
 	}
 
 	private boolean verticeAssociado(Vertice vertice) {
@@ -151,5 +157,17 @@ public class Rotas {
 		Collections.reverse(caminho);
 		
 		return caminho;
+	}
+	
+	public Integer getCustoCaminho(List<Vertice> caminho) {
+		Integer custoTotal = Integer.valueOf(0);
+		
+		for (int i = 1; i < caminho.size(); i++) {
+			Vertice vertice = caminho.get(i);
+			Integer custoTrecho = getPrecoAresta(precedentes.get(vertice), vertice);
+			custoTotal = custoTotal + custoTrecho;
+		}
+		
+		return custoTotal;
 	}
 }
