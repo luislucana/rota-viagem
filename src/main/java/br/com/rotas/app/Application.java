@@ -4,7 +4,6 @@ import java.util.Scanner;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 
 /**
@@ -15,9 +14,10 @@ import org.springframework.context.annotation.ComponentScan;
  */
 @SpringBootApplication
 //@EnableAutoConfiguration
-@ComponentScan("br.com.rotas.rest.*")
-@EntityScan("br.com.rotas.persistence.model")
+@ComponentScan("br.com.rotas.*")
 public class Application {
+	
+	public static GrafoBuilder builder = new GrafoBuilder();
 	
 	public static void main(String[] args) {
 		
@@ -29,7 +29,6 @@ public class Application {
 		String nomeArquivo = args[0];
 		//String nomeArquivo = "C:\\Users\\Luis\\Downloads\\github\\rota-viagem\\input-file.txt";
 		
-		GrafoBuilder builder = new GrafoBuilder();
 		builder.executar(nomeArquivo);
 		
 		SpringApplication.run(Application.class, args);
@@ -39,6 +38,7 @@ public class Application {
 		System.out.println("--------------------------------------------------");
 		
 		String melhorCaminho = "";
+		@SuppressWarnings("resource")
 		Scanner scanner = new Scanner(System.in);
 		while (true) {
 		    System.out.print("please enter the route: ");

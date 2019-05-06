@@ -22,9 +22,13 @@ public class GrafoBuilder {
 	
 	private static final String DELIMITADOR = ",";
 	
+	public static Path PATH_ARQUIVO = null;
+	
 	private List<String> obterLinhasArquivo(String nomeArquivo) {
 		List<String> linhasArquivo = null;
 		Path caminho = Paths.get(nomeArquivo);
+		PATH_ARQUIVO = caminho;
+		
 		try {
 			if (!Files.exists(caminho) || !Files.isRegularFile(caminho)) {
 				encerrarExecucao("Arquivo " + String.valueOf(caminho) + " nao encontrado.");
@@ -129,9 +133,9 @@ public class GrafoBuilder {
 			Vertice vertice = caminho.get(i);
 			
 			if (i != caminho.size() - 1) {
-				melhorCaminho = melhorCaminho + "-" + vertice + "-";
+				melhorCaminho = melhorCaminho + vertice + "-";
 			} else {
-				melhorCaminho = melhorCaminho + "-" + vertice;
+				melhorCaminho = melhorCaminho + vertice;
 			}
 		}
 		
